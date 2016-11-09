@@ -1,0 +1,17 @@
+#!/usr/bin/ruby
+
+require 'socket'
+require 'yaml'
+
+data = {
+  'hostname' => Socket.gethostname,
+  'ip_address' => Socket.ip_address_list.detect{|intf| intf.ipv4_private?}.ip_address
+}
+
+encoded_data = YAML.dump(data)
+
+udp = UDPSocket.open
+loop do
+  udp.send(encoded_data, 0, "10.0.1.106", 112233)
+  sleep 1
+end

@@ -1,0 +1,11 @@
+[Unit]
+Description = Listen heart beat
+After = network.target
+
+[Service]
+ExecStart = /home/centos/host_listener
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

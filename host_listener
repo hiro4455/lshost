@@ -1,0 +1,32 @@
+#!/usr/bin/ruby
+
+require 'socket'
+require 'fileutils'
+
+WORK_DIR='/tmp/hosts'
+
+FileUtils.mkdir_p(WORK_DIR)
+FileUtils.rm_f(WORK_DIR+'/*.*.*.*')
+
+alives = {}
+
+Thread.new do |th|
+  loop do
+    alives.select{|n,t| t+3 < Time.now}.each do |name,t|
+      FileUtils.rm_f(WORK_DIR+'/'+name)
+      alives.delete(name)
+    end
+    sleep 1
+  end
+end
+
+udp = UDPSocket.open
+udp.bind("0.0.0.0", 112233)
+loop do
+  data = udp.recvfrom(65535)
+  name = data[1][3] # IP Address
+  alives[name] = Time.now
+  File.open(WORK_DIR+'/'+name, File::RDWR+File::CREAT, 0644) do |f|
+    f.write(data[0])
+  end
+end

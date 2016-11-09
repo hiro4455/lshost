@@ -1,0 +1,11 @@
+[Unit]
+Description = Send heart beat
+After = network.target
+
+[Service]
+ExecStart = /home/centos/heartbeat
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
